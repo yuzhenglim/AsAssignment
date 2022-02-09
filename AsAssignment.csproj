@@ -119,6 +119,10 @@
     <Content Include="Content\Site.css" />
     <Content Include="Content\style.css" />
     <Content Include="Default.aspx" />
+    <Content Include="ErrorPages\NotFound.html" />
+    <Content Include="ErrorPages\ServerError.html" />
+    <Content Include="ErrorPages\UnAuthorized.html" />
+    <Content Include="ErrorPages\UnAuthorizedAdvanced.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -133,7 +137,6 @@
     <Content Include="Image\ShowImage.ashx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Login.aspx" />
-    <Content Include="ErrorPages\NofFound.aspx" />
     <Content Include="Registration.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -164,8 +167,6 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
-    <Content Include="ErrorPages\UnAuthorized.aspx" />
-    <Content Include="ErrorPages\UnAuthorizedAdvanced.aspx" />
     <Content Include="UserProfile.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -216,13 +217,6 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ErrorPages\NofFound.aspx.cs">
-      <DependentUpon>NofFound.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ErrorPages\NofFound.aspx.designer.cs">
-      <DependentUpon>NofFound.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration.aspx.cs">
       <DependentUpon>Registration.aspx</DependentUpon>
@@ -244,20 +238,6 @@
     </Compile>
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
-    </Compile>
-    <Compile Include="ErrorPages\UnAuthorized.aspx.cs">
-      <DependentUpon>UnAuthorized.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ErrorPages\UnAuthorized.aspx.designer.cs">
-      <DependentUpon>UnAuthorized.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="ErrorPages\UnAuthorizedAdvanced.aspx.cs">
-      <DependentUpon>UnAuthorizedAdvanced.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ErrorPages\UnAuthorizedAdvanced.aspx.designer.cs">
-      <DependentUpon>UnAuthorizedAdvanced.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserProfile.aspx.cs">
       <DependentUpon>UserProfile.aspx</DependentUpon>

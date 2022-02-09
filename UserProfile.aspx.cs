@@ -24,7 +24,7 @@ namespace AsAssignment
             {
                 if (!Session["AuthToken"].ToString().Equals(Request.Cookies["AuthToken"].Value))
                 {
-                    Response.Redirect("/ErrorPages/UnAuthorizedAdvanced.aspx", false);
+                    Response.Redirect("/ErrorPages/UnAuthorizedAdvanced.html", false);
                 }
                 else
                 {
@@ -40,7 +40,7 @@ namespace AsAssignment
                 Session.Abandon();
                 Session.RemoveAll();
 
-                Response.Redirect("/ErrorPages/UnAuthorized.aspx", false);
+                Response.Redirect("/ErrorPages/UnAuthorized.html", false);
 
                 if (Request.Cookies["ASP.NET_SessionId"] != null)
                 {
