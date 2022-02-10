@@ -16,6 +16,43 @@
             width: 319px;
         }
     </style>
+
+    <script type="text/javascript">
+        function validate() {
+
+            var str = document.getElementById('<%=new_pwd_tb.ClientID %>').value;
+            if (str.length < 12) {
+                document.getElementById("Label2").innerHTML = "Password must be at least 12 characters long";
+                document.getElementById("Label2").style.color = "Red";
+                return ("too_short");
+            }
+            else if (str.search(/[0-9]/) == -1) {
+                document.getElementById("Label2").innerHTML = "Password must have at least 1 number";
+                document.getElementById("Label2").style.color = "Red";
+                return ("no_number");
+            }
+            else if (str.search(/[A-Z]/) == -1) {
+                document.getElementById("Label2").innerHTML = "Password must have at least a capital letter";
+                document.getElementById("Label2").style.color = "Red";
+                return ("no_capital");
+            }
+            else if (str.search(/[a-z]/) == -1) {
+                document.getElementById("Label2").innerHTML = "Password must have at least a small letter";
+                document.getElementById("Label2").style.color = "Red";
+                return ("no_small");
+            }
+            else if (str.search(/[@#$%&]/) == -1) {
+                document.getElementById("Label2").innerHTML = "Password must have at least a special character";
+                document.getElementById("Label2").style.color = "Red";
+                return ("no_special");
+            }
+            document.getElementById("Label2").innerHTML = "STRONG password";
+            document.getElementById("Label2").style.color = "Green";
+
+        }
+
+
+    </script>
 </head>
 <body>
     <fieldset>
@@ -41,7 +78,7 @@
                 <tr>
                     <td class="auto-style3">New Password</td>
                     <td class="auto-style2">
-                        <asp:TextBox ID="new_pwd_tb" runat="server" Width="400px" TextMode="Password"></asp:TextBox>
+                        <asp:TextBox ID="new_pwd_tb" runat="server" Width="400px" TextMode="Password" onkeyup="javascript:validate()"></asp:TextBox>
                     </td>
                     <td>
                         <asp:Label ID="Label2" runat="server" Text=""></asp:Label>

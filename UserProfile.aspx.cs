@@ -30,7 +30,7 @@ namespace AsAssignment
                 {
                     emailID = (string)Session["Username"];
                     displayUserProfile(emailID);
-                    if (getPasswordAge(emailID) > 10)
+                    if (getPasswordAge(emailID) > 2)
                     {
                         Response.Redirect("ChangePassword.aspx", false);
                     }

@@ -5,9 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Home Page</title>
-    <script type="text/javascript">
-        
-    </script>
+    <meta http-equiv='refresh' content='60;url=Login.aspx' />
 
 </head>
 <body>
