@@ -58,72 +58,82 @@ namespace AsAssignment
 
         protected void chnpwd_button_Click(object sender, EventArgs e)
         {
-
-            
-            string pwd = HttpUtility.HtmlEncode(new_pwd_tb.Text).ToString().Trim();
-            string oldpwd = HttpUtility.HtmlEncode(old_pwd_tb.Text).ToString().Trim();
-
-            SHA512Managed hashing = new SHA512Managed();
-            string dbHash = getDBHash(userid);
-            string dbSalt = getDBSalt(userid);
-            try
+            if(getPasswordAge(userid) > 5)
             {
-                if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
+
+                string pwd = HttpUtility.HtmlEncode(new_pwd_tb.Text).ToString().Trim();
+                string oldpwd = HttpUtility.HtmlEncode(old_pwd_tb.Text).ToString().Trim();
+
+                SHA512Managed hashing = new SHA512Managed();
+                string dbHash = getDBHash(userid);
+                string dbSalt = getDBSalt(userid);
+                try
                 {
-                    //Checks if the current password is as entered
-                    string pwdWithSalt = oldpwd + dbSalt;
-                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
-                    string userHash = Convert.ToBase64String(hashWithSalt);
-                    if (userHash.Equals(dbHash))
+                    if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
                     {
-                        SHA512Managed hash = new SHA512Managed();
-                        string pwdAndSalt = pwd + dbSalt;
-                        byte[] plainHash = hash.ComputeHash(Encoding.UTF8.GetBytes(pwd));
-                        byte[] hashAndSalt = hash.ComputeHash(Encoding.UTF8.GetBytes(pwdAndSalt));
-                        finalHash = Convert.ToBase64String(hashAndSalt);
-
-                        //checks if current password has any password history
-                        try
+                        //Checks if the current password is as entered
+                        string pwdWithSalt = oldpwd + dbSalt;
+                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                        string userHash = Convert.ToBase64String(hashWithSalt);
+                        if (userHash.Equals(dbHash))
                         {
-                            SearchForOldHash(userid);
-                            //SqlConnection connection = new SqlConnection(MYDBConnectionString);
-                            //string sql = "select COUNT(*) FROM UserAccount WHERE EmailAddress=@USERID";
-                            //SqlCommand command = new SqlCommand(sql, connection);
-                            //command.Parameters.AddWithValue("@NewHash", finalHash);
-                            //command.Parameters.AddWithValue("@USERID", userid);
-                            //connection.Open();
+                            SHA512Managed hash = new SHA512Managed();
+                            string pwdAndSalt = pwd + dbSalt;
+                            byte[] plainHash = hash.ComputeHash(Encoding.UTF8.GetBytes(pwd));
+                            byte[] hashAndSalt = hash.ComputeHash(Encoding.UTF8.GetBytes(pwdAndSalt));
+                            finalHash = Convert.ToBase64String(hashAndSalt);
 
-                            if (finalHash.Equals(userHash)||finalHash.Equals(OldHashOne)||finalHash.Equals(OldHashTwo))
+                            //checks if current password has any password history
+                            try
                             {
-                                Label2.Text = "Password has been used before!";
-                                Label2.ForeColor = Color.Red;
-                            }
-                            else
-                            {
+                                SearchForOldHash(userid);
+                                //SqlConnection connection = new SqlConnection(MYDBConnectionString);
+                                //string sql = "select COUNT(*) FROM UserAccount WHERE EmailAddress=@USERID";
+                                //SqlCommand command = new SqlCommand(sql, connection);
+                                //command.Parameters.AddWithValue("@NewHash", finalHash);
+                                //command.Parameters.AddWithValue("@USERID", userid);
+                                //connection.Open();
 
-                                passwordChange(userid, dbHash, dbSalt);
+                                if (finalHash.Equals(userHash) || finalHash.Equals(OldHashOne) || finalHash.Equals(OldHashTwo))
+                                {
+                                    Label2.Text = "Password has been used before!";
+                                    Label2.ForeColor = Color.Red;
+                                }
+                                else
+                                {
+                                    passwordChange(userid, dbHash, dbSalt);
+                                }
                             }
+                            catch (Exception ex)
+                            {
+                                throw new Exception(ex.ToString());
+                            }
+
+
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            throw new Exception(ex.ToString());
+                            Label1.Text = "Wrong Password";
+                            Label1.ForeColor = Color.Red;
                         }
-
 
                     }
-                    else
-                    {
-                        Label1.Text = "Wrong Password";
-                        Label1.ForeColor = Color.Red;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                finally 
+                { 
 
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.ToString());
+                Label3.Text = "You have just changed your password recently";
+                Label3.ForeColor = Color.Red;
             }
-            finally { }
+            
         }
 
         protected void SearchForOldHash(string userid)
@@ -170,7 +180,7 @@ namespace AsAssignment
             {
                 using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("UPDATE UserAccount SET PasswordHash = @NewPasswordHash, OldPasswordOneHash = @PasswordHash, OldPasswordTwoHash = @PasswordTwoHash WHERE EmailAddress=@USERID"))
+                    using (SqlCommand cmd = new SqlCommand("UPDATE UserAccount SET PasswordHash = @NewPasswordHash, OldPasswordOneHash = @PasswordHash, OldPasswordTwoHash = @PasswordTwoHash, DateTimePassword=@NewPasswordTime WHERE EmailAddress=@USERID"))
                     {
                         using (SqlDataAdapter sda = new SqlDataAdapter())
                         {
@@ -186,6 +196,8 @@ namespace AsAssignment
                             {
                                 cmd.Parameters.AddWithValue("@PasswordTwoHash", DBNull.Value);
                             }
+
+                            cmd.Parameters.AddWithValue("@NewPasswordTime", DateTime.Now);
                             cmd.Connection = con;
                             con.Open();
                             cmd.ExecuteNonQuery();
@@ -205,6 +217,41 @@ namespace AsAssignment
             {
                 throw new Exception(ex.ToString());
             }
+        }
+
+        protected int getPasswordAge(string userid)
+        {
+            int c = 0;
+            SqlConnection connection = new SqlConnection(MYDBConnectionString);
+            string sql = "select DateTimePassword FROM UserAccount WHERE EmailAddress=@USERID";
+            SqlCommand command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@USERID", userid);
+            try
+            {
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["DateTimePassword"] != null)
+                        {
+                            if (reader["DateTimePassword"] != DBNull.Value)
+                            {
+                                DateTime dbAge = DateTime.Parse(reader["DateTimePassword"].ToString());
+                                DateTime now = DateTime.Now;
+                                var pwdAge = now - dbAge;
+                                c = pwdAge.Minutes;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally { connection.Close(); }
+            return c;
         }
 
         protected string getDBHash(string userid)

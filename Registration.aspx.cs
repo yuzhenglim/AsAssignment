@@ -139,7 +139,7 @@ namespace AsAssignment
                 {
                     using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO UserAccount VALUES(@FirstName, @LastName, @EmailAddress, @PasswordHash, @PasswordSalt, @DateOfBirth, @CCinfo, @Photo, @IV, @Key, @AccountLock, @OldPasswordOneHash, @OldPasswordTwoHash)"))
+                        using (SqlCommand cmd = new SqlCommand("INSERT INTO UserAccount VALUES(@FirstName, @LastName, @EmailAddress, @PasswordHash, @PasswordSalt, @DateOfBirth, @CCinfo, @Photo, @IV, @Key, @AccountLock, @OldPasswordOneHash, @OldPasswordTwoHash, @DateTimePassword)"))
                         {
                             using (SqlDataAdapter sda = new SqlDataAdapter())
                             {
@@ -171,6 +171,7 @@ namespace AsAssignment
                                 cmd.Parameters.AddWithValue("@AccountLock", 0);
                                 cmd.Parameters.AddWithValue("@OldPasswordOneHash", DBNull.Value);
                                 cmd.Parameters.AddWithValue("@OldPasswordTwoHash", DBNull.Value);
+                                cmd.Parameters.AddWithValue("@DateTimePassword", DateTime.Now);
                                 cmd.Connection = con;
                                 con.Open();
                                 cmd.ExecuteNonQuery();
@@ -227,8 +228,8 @@ namespace AsAssignment
         {
             int pwdScores = checkPwd(password_tb.Text);
             int creditScores = checkCredit(credit_card_tb.Text);
-            //if (ValidateGoogleCaptcha())
-            //{
+            if (ValidateGoogleCaptcha())
+            {
 
                 if (creditScores == 1 || creditScores == 2 || creditScores == 3 || creditScores == 4)
                 {
@@ -267,12 +268,12 @@ namespace AsAssignment
                 }
 
                 
-            //}
-            //else
-            //{
-            //    Label3.Text = "Unable to process your registration";
-            //    Label3.ForeColor = Color.Red;
-            //}
+            }
+            else
+            {
+                Label3.Text = "Unable to process your registration";
+                Label3.ForeColor = Color.Red;
+            }
                 
             
 

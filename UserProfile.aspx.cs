@@ -30,6 +30,10 @@ namespace AsAssignment
                 {
                     emailID = (string)Session["Username"];
                     displayUserProfile(emailID);
+                    if (getPasswordAge(emailID) > 10)
+                    {
+                        Response.Redirect("ChangePassword.aspx", false);
+                    }
                 }
 
             }
@@ -75,6 +79,41 @@ namespace AsAssignment
                 Response.Cookies["AuthToken"].Value = string.Empty;
                 Response.Cookies["AuthToken"].Expires = DateTime.Now.AddMonths(-10);
             }
+        }
+
+        protected int getPasswordAge(string userid)
+        {
+            int c = 0;
+            SqlConnection connection = new SqlConnection(MYDBConnectionString);
+            string sql = "select DateTimePassword FROM UserAccount WHERE EmailAddress=@USERID";
+            SqlCommand command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@USERID", userid);
+            try
+            {
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["DateTimePassword"] != null)
+                        {
+                            if (reader["DateTimePassword"] != DBNull.Value)
+                            {
+                                DateTime dbAge = DateTime.Parse(reader["DateTimePassword"].ToString());
+                                DateTime now = DateTime.Now;
+                                var pwdAge = now - dbAge;
+                                c = pwdAge.Minutes;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally { connection.Close(); }
+            return c;
         }
 
         protected void displayUserProfile(string userid)
