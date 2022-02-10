@@ -31,7 +31,7 @@
                 <tr>
                     <td class="auto-style3">Old Password</td>
                     <td class="auto-style2">
-                        <asp:TextBox ID="old_pwd_tb" runat="server" Width="400px"></asp:TextBox>
+                        <asp:TextBox ID="old_pwd_tb" runat="server" Width="400px" TextMode="Password"></asp:TextBox>
                     </td>
                     <td>
                         <asp:Label ID="Label1" runat="server" Text=""></asp:Label>
@@ -40,7 +40,7 @@
                 <tr>
                     <td class="auto-style3">New Password</td>
                     <td class="auto-style2">
-                        <asp:TextBox ID="new_pwd_tb" runat="server" Width="400px"></asp:TextBox>
+                        <asp:TextBox ID="new_pwd_tb" runat="server" Width="400px" TextMode="Password"></asp:TextBox>
                     </td>
                     <td>
                         <asp:Label ID="Label2" runat="server" Text=""></asp:Label>
@@ -49,7 +49,7 @@
                 <tr>
                     <td class="auto-style3">Confirm New Password:</td>
                     <td class="auto-style2">
-                        <asp:TextBox ID="cfm_pwd_tb" runat="server" Width="400px"></asp:TextBox>
+                        <asp:TextBox ID="cfm_pwd_tb" runat="server" Width="400px" TextMode="Password"></asp:TextBox>
                     </td>
                     <td>
                         
