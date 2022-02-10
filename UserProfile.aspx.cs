@@ -129,6 +129,12 @@ namespace AsAssignment
             }
             catch (Exception ex)
             {
+                Label3.Text = "Input Invalid. Please try again";
+                lbl_name.Text = "";
+                lbl_email.Text = "";
+                lbl_dob.Text = "";
+                lbl_ccInfo.Text = "";
+                Console.WriteLine(ex.ToString());
                 throw new Exception(ex.ToString());
             }
             finally
@@ -167,7 +173,7 @@ namespace AsAssignment
         protected void chg_pwd_button_Click(object sender, EventArgs e)
         {
             Session["Username"] = emailID;
-            Response.Redirect("ChangePassword.aspx");
+            Response.Redirect("ChangePassword.aspx", false);
 
         }
     }

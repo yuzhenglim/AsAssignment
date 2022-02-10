@@ -193,7 +193,6 @@ namespace AsAssignment
                     dob_tb.Text = "";
                     credit_card_tb.Text = "";
                     Console.WriteLine(ex.ToString());
-                    throw new Exception(ex.ToString());
 
                 }
             }

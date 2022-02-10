@@ -26,7 +26,7 @@ namespace AsAssignment
 
         protected void register_button_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Registration.aspx");
+            Response.Redirect("Registration.aspx", false);
         }
 
         protected void login_button_Click(object sender, EventArgs e)

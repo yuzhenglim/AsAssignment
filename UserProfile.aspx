@@ -16,6 +16,9 @@
             <fieldset>
                 <legend>User Profile</legend>
                 <br />
+
+                <asp:Label ID="Label3" runat="server" Text=""></asp:Label>
+
                 Photo:<asp:Image ImageUrl="" ID="Image1" runat="server" />
 
                 <br />
