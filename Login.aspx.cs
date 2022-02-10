@@ -55,6 +55,7 @@ namespace AsAssignment
                             Session["AuthToken"] = guid;
 
                             Response.Cookies.Add(new HttpCookie("AuthToken", guid));
+                            resetCountLock(userid);
 
                             Response.Redirect("UserProfile.aspx", false);
                         }
@@ -251,6 +252,34 @@ namespace AsAssignment
                             cmd.ExecuteNonQuery();
                             con.Close();
                             
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+        }
+
+        protected void resetCountLock(string userid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(MYDBConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UPDATE UserAccount SET AccountLock = 0 WHERE EmailAddress=@USERID"))
+                    {
+                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        {
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Parameters.AddWithValue("@USERID", userid);
+                            cmd.Connection = con;
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+
                         }
                     }
                 }

@@ -139,7 +139,7 @@ namespace AsAssignment
                 {
                     using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO UserAccount VALUES(@FirstName, @LastName, @EmailAddress, @PasswordHash, @PasswordSalt, @DateOfBirth, @CCinfo, @Photo, @IV, @Key, @AccountLock, @OldPasswordOneHash, @OldPasswordOneSalt, @OldPasswordTwoHash, @OldPasswordTwoSalt)"))
+                        using (SqlCommand cmd = new SqlCommand("INSERT INTO UserAccount VALUES(@FirstName, @LastName, @EmailAddress, @PasswordHash, @PasswordSalt, @DateOfBirth, @CCinfo, @Photo, @IV, @Key, @AccountLock, @OldPasswordOneHash, @OldPasswordTwoHash)"))
                         {
                             using (SqlDataAdapter sda = new SqlDataAdapter())
                             {
@@ -170,9 +170,7 @@ namespace AsAssignment
                                 cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
                                 cmd.Parameters.AddWithValue("@AccountLock", 0);
                                 cmd.Parameters.AddWithValue("@OldPasswordOneHash", DBNull.Value);
-                                cmd.Parameters.AddWithValue("@OldPasswordOneSalt", DBNull.Value);
                                 cmd.Parameters.AddWithValue("@OldPasswordTwoHash", DBNull.Value);
-                                cmd.Parameters.AddWithValue("@OldPasswordTwoSalt", DBNull.Value);
                                 cmd.Connection = con;
                                 con.Open();
                                 cmd.ExecuteNonQuery();

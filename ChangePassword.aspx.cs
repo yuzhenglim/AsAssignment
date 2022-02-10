@@ -16,10 +16,8 @@ namespace AsAssignment
     {
         string MYDBConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
         static string finalHash;
-        static string salt_pwd;
         string OldHashTwo = null;
         string OldHashOne = null;
-        string OldSaltOne = null;
         string userid;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -78,12 +76,8 @@ namespace AsAssignment
                     string userHash = Convert.ToBase64String(hashWithSalt);
                     if (userHash.Equals(dbHash))
                     {
-                        RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-                        byte[] pwdSaltByte = new byte[8];
-                        rng.GetBytes(pwdSaltByte);
-                        salt_pwd = Convert.ToBase64String(pwdSaltByte);
                         SHA512Managed hash = new SHA512Managed();
-                        string pwdAndSalt = pwd + salt_pwd;
+                        string pwdAndSalt = pwd + dbSalt;
                         byte[] plainHash = hash.ComputeHash(Encoding.UTF8.GetBytes(pwd));
                         byte[] hashAndSalt = hash.ComputeHash(Encoding.UTF8.GetBytes(pwdAndSalt));
                         finalHash = Convert.ToBase64String(hashAndSalt);
@@ -91,23 +85,23 @@ namespace AsAssignment
                         //checks if current password has any password history
                         try
                         {
-                            
-                            SqlConnection connection = new SqlConnection(MYDBConnectionString);
-                            string sql = "select COUNT(*) FROM UserAccount WHERE EmailAddress=@USERID AND (PasswordHash=@NewHash OR OldPasswordOneHash=@NewHash OR OldPasswordTwoHash=@NewHash)";
-                            SqlCommand command = new SqlCommand(sql, connection);
-                            command.Parameters.AddWithValue("@NewHash", finalHash);
-                            command.Parameters.AddWithValue("@USERID", userid);
-                            connection.Open();
+                            SearchForOldHash(userid);
+                            //SqlConnection connection = new SqlConnection(MYDBConnectionString);
+                            //string sql = "select COUNT(*) FROM UserAccount WHERE EmailAddress=@USERID";
+                            //SqlCommand command = new SqlCommand(sql, connection);
+                            //command.Parameters.AddWithValue("@NewHash", finalHash);
+                            //command.Parameters.AddWithValue("@USERID", userid);
+                            //connection.Open();
 
-                            if (command.ExecuteScalar() == null || (int)command.ExecuteScalar() == 0)
-                            {
-                                passwordChange(userid, dbHash, dbSalt);
-                                Response.Redirect("UserProfile.aspx", false);
-                            }
-                            else
+                            if (finalHash.Equals(userHash)||finalHash.Equals(OldHashOne)||finalHash.Equals(OldHashTwo))
                             {
                                 Label2.Text = "Password has been used before!";
                                 Label2.ForeColor = Color.Red;
+                            }
+                            else
+                            {
+
+                                passwordChange(userid, dbHash, dbSalt);
                             }
                         }
                         catch (Exception ex)
@@ -148,16 +142,12 @@ namespace AsAssignment
 
                         if (reader["OldPasswordTwoHash"] != DBNull.Value)
                         {
-                            OldHashOne = reader["OldPasswordTwoHash"].ToString();
-                        }
-                        if (reader["OldPasswordOneSalt"] != DBNull.Value)
-                        {
-                            OldSaltOne = reader["OldPasswordOneSalt"].ToString();
+                            OldHashTwo = reader["OldPasswordTwoHash"].ToString();
                         }
 
                         if (reader["OldPasswordOneHash"] != DBNull.Value)
                         {
-                            OldHashTwo = reader["OldPasswordTwoHash"].ToString();
+                            OldHashOne = reader["OldPasswordOneHash"].ToString();
                         }
 
                     }
@@ -180,16 +170,14 @@ namespace AsAssignment
             {
                 using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("UPDATE UserAccount SET PasswordHash = @NewPasswordHash, PasswordSalt = @NewPasswordSalt, OldPasswordOneHash = @PasswordHash, OldPasswordOneSalt = @PasswordSalt, OldPasswordTwoHash = @PasswordTwoHash, OldPasswordTwoSalt = @PasswordTwoSalt WHERE EmailAddress=@USERID"))
+                    using (SqlCommand cmd = new SqlCommand("UPDATE UserAccount SET PasswordHash = @NewPasswordHash, OldPasswordOneHash = @PasswordHash, OldPasswordTwoHash = @PasswordTwoHash WHERE EmailAddress=@USERID"))
                     {
                         using (SqlDataAdapter sda = new SqlDataAdapter())
                         {
                             cmd.CommandType = CommandType.Text;
                             cmd.Parameters.AddWithValue("@USERID", userid);
                             cmd.Parameters.AddWithValue("@NewPasswordHash", finalHash);
-                            cmd.Parameters.AddWithValue("@NewPasswordSalt", salt_pwd);
                             cmd.Parameters.AddWithValue("@PasswordHash", dbHash);
-                            cmd.Parameters.AddWithValue("@PasswordSalt", dbSalt);
                             if (OldHashOne != null)
                             {
                                 cmd.Parameters.AddWithValue("@PasswordTwoHash", OldHashOne);
@@ -198,19 +186,15 @@ namespace AsAssignment
                             {
                                 cmd.Parameters.AddWithValue("@PasswordTwoHash", DBNull.Value);
                             }
-                            if (OldHashTwo != null)
-                            {
-                                cmd.Parameters.AddWithValue("@PasswordTwoSalt", OldHashTwo);
-                            }
-                            else
-                            {
-                                cmd.Parameters.AddWithValue("@PasswordTwoSalt", DBNull.Value);
-                            }
                             cmd.Connection = con;
                             con.Open();
                             cmd.ExecuteNonQuery();
                             con.Close();
-                            
+
+
+                            Session["Username"] = userid;
+                            Response.Redirect("UserProfile.aspx", false);
+
 
                         }
                     }
