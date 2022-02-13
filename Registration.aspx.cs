@@ -228,8 +228,8 @@ namespace AsAssignment
         {
             int pwdScores = checkPwd(password_tb.Text);
             int creditScores = checkCredit(credit_card_tb.Text);
-            if (ValidateGoogleCaptcha())
-            {
+            //if (ValidateGoogleCaptcha())
+            //{
 
                 if (creditScores == 1 || creditScores == 2 || creditScores == 3 || creditScores == 4)
                 {
@@ -268,12 +268,12 @@ namespace AsAssignment
                 }
 
                 
-            }
-            else
-            {
-                Label3.Text = "Unable to process your registration";
-                Label3.ForeColor = Color.Red;
-            }
+            //}
+            //else
+            //{
+            //    Label3.Text = "Unable to process your registration";
+            //    Label3.ForeColor = Color.Red;
+            //}
                 
             
 
